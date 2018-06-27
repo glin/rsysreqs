@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"regexp"
+
+	"rsysreqs/rule"
 )
 
 func main() {
@@ -19,13 +19,13 @@ func main() {
 
 	flag.Parse()
 
-	rules, err := ReadRules(*rulesDir)
+	rules, err := readRules(*rulesDir)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	matched, err := MatchRules(*sysreqs, rules)
+	matched, err := rule.MatchRules(*sysreqs, rules)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -37,25 +37,7 @@ func main() {
 	}
 }
 
-var ErrNoMatchingRules = errors.New("no matching rules found")
-
-type Rule struct {
-	Sysreqs      []string
-	Dependencies []Dependency
-}
-
-type Dependency struct {
-	Packages    []string
-	Constraints []Constraint
-}
-
-type Constraint struct {
-	Os           string
-	Distribution string
-	Architecture string
-}
-
-func ReadRules(path string) (rules []Rule, err error) {
+func readRules(path string) (rules []rule.Rule, err error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return rules, err
@@ -67,31 +49,13 @@ func ReadRules(path string) (rules []Rule, err error) {
 			return rules, err
 		}
 
-		rule := Rule{}
-		err = json.Unmarshal(b, &rule)
+		r := rule.Rule{}
+		err = json.Unmarshal(b, &r)
 		if err != nil {
 			return rules, err
 		}
-		rules = append(rules, rule)
+		rules = append(rules, r)
 	}
 
 	return rules, err
-}
-
-func MatchRules(sysreqs string, rules []Rule) (matched []Rule, err error) {
-	for _, rule := range rules {
-		for _, pattern := range rule.Sysreqs {
-			// TODO check for existing flags
-			match, _ := regexp.MatchString("(?i)"+pattern, sysreqs)
-			if match {
-				matched = append(matched, rule)
-			}
-		}
-	}
-
-	if len(matched) == 0 {
-		err = ErrNoMatchingRules
-	}
-
-	return matched, err
 }

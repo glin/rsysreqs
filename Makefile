@@ -7,7 +7,7 @@ build:
 	@GOPATH=$(PWD) go build -o ./bin/$(BINARY_NAME) $(PACKAGE)
 
 test:
-	@GOPATH=$(PWD) go test $(PACKAGE)
+	@GOPATH=$(PWD) go test $(PACKAGE)/...
 
 clean:
 	go clean
