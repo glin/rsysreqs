@@ -15,7 +15,7 @@ func main() {
 	const defaultRulesDir = "../rsysreqs-db/sysreqs/"
 
 	sysreqs := flag.String("s", defaultSysreqs, "system requirements")
-	rulesDir := flag.String("d", defaultRulesDir, "rules directory")
+	rulesDir := flag.String("d", defaultRulesDir, "use rules from this directory")
 
 	flag.Parse()
 
