@@ -1,0 +1,10 @@
+language: go
+
+go:
+  - "1.x"
+
+before_install:
+  - go get -u github.com/golang/dep/cmd/dep
+
+install:
+  - make vendor-ensure
