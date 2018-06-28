@@ -8,19 +8,19 @@ import (
 var ErrNoMatchingRules = errors.New("no matching rules found")
 
 type Rule struct {
-	Sysreqs      []string
-	Dependencies []Dependency
+	Sysreqs      []string     `json:"sysreqs"`
+	Dependencies []Dependency `json:"dependencies"`
 }
 
 type Dependency struct {
-	Packages    []string
-	Constraints []Constraint
+	Packages    []string     `json:"packages"`
+	Constraints []Constraint `json:"constraints"`
 }
 
 type Constraint struct {
-	Os           string
-	Distribution string
-	Architecture string
+	Os           string `json:"os,omitempty"`
+	Distribution string `json:"distribution,omitempty"`
+	Architecture string `json:"architecture,omitempty"`
 }
 
 func MatchRules(sysreqs string, rules []Rule) (matched []Rule, err error) {
