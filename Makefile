@@ -5,6 +5,10 @@ all: test build
 build:
 	@GOPATH=$(PWD) go install $(PACKAGE)/...
 
+PORT ?= 3000
+start:
+	@PORT=$(PORT) GOPATH=$(PWD) ./bin/api
+
 test:
 	@GOPATH=$(PWD) go test $(PACKAGE)/...
 
