@@ -1,16 +1,16 @@
-PACKAGE = rsysreqs
+PACKAGES = rsysreqs/...
 
 all: test build
 
 build:
-	@GOPATH=$(PWD) go install $(PACKAGE)/...
+	@GOPATH=$(PWD) go install $(PACKAGES)
 
 PORT ?= 3000
 start:
 	@PORT=$(PORT) GOPATH=$(PWD) ./bin/api
 
 test:
-	@GOPATH=$(PWD) go test $(PACKAGE)/...
+	@GOPATH=$(PWD) go test $(PACKAGES)
 
 clean:
 	go clean
