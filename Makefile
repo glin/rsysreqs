@@ -10,7 +10,7 @@ start:
 	@PORT=$(PORT) GOPATH=$(PWD) ./bin/api
 
 test:
-	@GOPATH=$(PWD) go test $(PACKAGES)
+	@GOPATH=$(PWD) go test -v $(PACKAGES)
 
 clean:
 	go clean
