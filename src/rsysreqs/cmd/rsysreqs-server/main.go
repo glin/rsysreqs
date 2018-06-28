@@ -3,10 +3,9 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
-	"os"
 
 	"rsysreqs/rule"
 
@@ -21,8 +20,7 @@ func main() {
 
 	rules, err := readRules(*rulesDir)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	r := gin.Default()
