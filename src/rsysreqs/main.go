@@ -32,8 +32,8 @@ func main() {
 	}
 
 	fmt.Printf("found %d rules\n", len(matched))
-	for _, rule := range matched {
-		fmt.Println(rule)
+	for _, r := range matched {
+		fmt.Println(r)
 	}
 }
 
