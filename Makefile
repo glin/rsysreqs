@@ -7,7 +7,7 @@ build:
 
 PORT ?= 3000
 start:
-	@PORT=$(PORT) GOPATH=$(PWD) ./bin/api
+	@PORT=$(PORT) GOPATH=$(PWD) ./bin/rsysreqs-server
 
 test:
 	@GOPATH=$(PWD) go test -v $(PACKAGES)
