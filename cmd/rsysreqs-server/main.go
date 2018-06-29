@@ -4,16 +4,21 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/glin/rsysreqs"
 )
 
 func main() {
-	const defaultRulesDir = "../rsysreqs-db/sysreqs/"
-	rulesDir := flag.String("d", defaultRulesDir, "use rules from this directory")
+	rulesDir := flag.String("d", "", "use rules from this directory")
 
 	flag.Parse()
+
+	if *rulesDir == "" {
+		flag.Usage()
+		os.Exit(2)
+	}
 
 	rules, err := rsysreqs.ReadRules(*rulesDir)
 

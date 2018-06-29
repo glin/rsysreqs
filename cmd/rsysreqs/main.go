@@ -9,13 +9,15 @@ import (
 )
 
 func main() {
-	const defaultSysreqs = "libXML2, curl; pkgA"
-	const defaultRulesDir = "../rsysreqs-db/sysreqs/"
-
-	sysreqs := flag.String("s", defaultSysreqs, "system requirements")
-	rulesDir := flag.String("d", defaultRulesDir, "use rules from this directory")
+	sysreqs := flag.String("s", "", "system requirements")
+	rulesDir := flag.String("d", "", "use rules from this directory")
 
 	flag.Parse()
+
+	if *sysreqs == "" || *rulesDir == "" {
+		flag.Usage()
+		os.Exit(2)
+	}
 
 	rules, err := rsysreqs.ReadRules(*rulesDir)
 	if err != nil {

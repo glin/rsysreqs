@@ -18,12 +18,12 @@ make test
 $ rsysreqs -h
 Usage of rsysreqs:
   -d string
-        use rules from this directory (default "../rsysreqs-db/sysreqs/")
+        use rules from this directory
   -s string
-        system requirements (default "libXML2, curl; pkgA")
+        system requirements
 
 $ rsysreqs-server -h
 Usage of rsysreqs-server:
   -d string
-        use rules from this directory (default "../rsysreqs-db/sysreqs/")
+        use rules from this directory
 ```
