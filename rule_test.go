@@ -13,8 +13,6 @@ type Suite struct{}
 var _ = check.Suite(&Suite{})
 
 func (s *Suite) TestRuleMatch(c *check.C) {
-	sysreqs := "pkga, pkgb"
-
 	rulePkgA := Rule{
 		Sysreqs: []string{"\\bpkgA\\b"},
 		Dependencies: []Dependency{
@@ -25,8 +23,21 @@ func (s *Suite) TestRuleMatch(c *check.C) {
 		},
 	}
 
-	matched, err := rulePkgA.Match(sysreqs)
+	tests := []struct {
+		sysreqs         string
+		expectedMatched bool
+	}{
+		{"pkgA", true},
+		{"pkga, pkgb", true},
+		{"pkgb;pkga", true},
+		{"pkga pkgb", true},
+		{"pkgb", false},
+		{"pkgAB", false},
+	}
 
-	c.Assert(err, check.IsNil)
-	c.Assert(matched, check.Equals, true)
+	for _, test := range tests {
+		matched, err := rulePkgA.Match(test.sysreqs)
+		c.Assert(err, check.IsNil)
+		c.Assert(matched, check.Equals, test.expectedMatched)
+	}
 }
