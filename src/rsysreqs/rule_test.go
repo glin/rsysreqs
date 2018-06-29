@@ -1,4 +1,4 @@
-package rule
+package rsysreqs
 
 import (
 	"testing"
@@ -12,7 +12,7 @@ type Suite struct{}
 
 var _ = check.Suite(&Suite{})
 
-func (s *Suite) TestMatchRules(c *check.C) {
+func (s *Suite) TestRuleMatch(c *check.C) {
 	sysreqs := "pkga, pkgb"
 
 	rulePkgA := Rule{
@@ -25,11 +25,8 @@ func (s *Suite) TestMatchRules(c *check.C) {
 		},
 	}
 
-	rules := []Rule{rulePkgA}
-
-	matched, err := MatchRules(sysreqs, rules)
+	matched, err := rulePkgA.Match(sysreqs)
 
 	c.Assert(err, check.IsNil)
-	c.Assert(matched, check.HasLen, 1)
-	c.Assert(matched[0], check.DeepEquals, rulePkgA)
+	c.Assert(matched, check.Equals, true)
 }

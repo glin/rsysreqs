@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 
-	"rsysreqs/rule"
+	"rsysreqs"
 )
 
 func main() {
@@ -19,13 +17,13 @@ func main() {
 
 	flag.Parse()
 
-	rules, err := readRules(*rulesDir)
+	rules, err := rsysreqs.ReadRules(*rulesDir)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	matched, err := rule.MatchRules(*sysreqs, rules)
+	matched, err := rules.FindRules(*sysreqs)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -35,27 +33,4 @@ func main() {
 	for _, r := range matched {
 		fmt.Println(r)
 	}
-}
-
-func readRules(path string) (rules []rule.Rule, err error) {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return rules, err
-	}
-
-	for _, file := range files {
-		b, err := ioutil.ReadFile(path + file.Name())
-		if err != nil {
-			return rules, err
-		}
-
-		r := rule.Rule{}
-		err = json.Unmarshal(b, &r)
-		if err != nil {
-			return rules, err
-		}
-		rules = append(rules, r)
-	}
-
-	return rules, err
 }

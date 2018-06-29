@@ -1,11 +1,8 @@
-package rule
+package rsysreqs
 
 import (
-	"errors"
 	"regexp"
 )
-
-var ErrNoMatchingRules = errors.New("no matching rules found")
 
 type Rule struct {
 	Sysreqs      []string     `json:"sysreqs"`
@@ -23,20 +20,13 @@ type Constraint struct {
 	Architecture string `json:"architecture,omitempty"`
 }
 
-func MatchRules(sysreqs string, rules []Rule) (matched []Rule, err error) {
-	for _, rule := range rules {
-		for _, pattern := range rule.Sysreqs {
-			// TODO check for existing flags
-			match, _ := regexp.MatchString("(?i)"+pattern, sysreqs)
-			if match {
-				matched = append(matched, rule)
-			}
+func (rule Rule) Match(sysreqs string) (matched bool, err error) {
+	for _, pattern := range rule.Sysreqs {
+		// TODO check for existing flags
+		matched, err = regexp.MatchString("(?i)"+pattern, sysreqs)
+		if matched || err != nil {
+			break
 		}
 	}
-
-	if len(matched) == 0 {
-		err = ErrNoMatchingRules
-	}
-
 	return matched, err
 }

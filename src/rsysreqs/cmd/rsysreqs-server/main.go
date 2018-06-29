@@ -1,15 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"io/ioutil"
 	"log"
 	"net/http"
 
-	"rsysreqs/rule"
-
 	"github.com/gin-gonic/gin"
+
+	"rsysreqs"
 )
 
 func main() {
@@ -18,7 +16,8 @@ func main() {
 
 	flag.Parse()
 
-	rules, err := readRules(*rulesDir)
+	rules, err := rsysreqs.ReadRules(*rulesDir)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,7 +26,7 @@ func main() {
 	r.GET("/rules", func(c *gin.Context) {
 		sysreqs := c.DefaultQuery("sysreqs", "")
 
-		matched, err := rule.MatchRules(sysreqs, rules)
+		matched, err := rules.FindRules(sysreqs)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
@@ -41,27 +40,4 @@ func main() {
 	})
 
 	r.Run()
-}
-
-func readRules(path string) (rules []rule.Rule, err error) {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return rules, err
-	}
-
-	for _, file := range files {
-		b, err := ioutil.ReadFile(path + file.Name())
-		if err != nil {
-			return rules, err
-		}
-
-		r := rule.Rule{}
-		err = json.Unmarshal(b, &r)
-		if err != nil {
-			return rules, err
-		}
-		rules = append(rules, r)
-	}
-
-	return rules, err
 }
