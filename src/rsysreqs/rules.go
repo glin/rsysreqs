@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"path"
 )
 
 var ErrNoMatchingRules = errors.New("no matching rules found")
@@ -28,14 +29,14 @@ func (rules Rules) FindRules(sysreqs string) (found Rules, err error) {
 	return found, err
 }
 
-func ReadRules(path string) (rules Rules, err error) {
-	files, err := ioutil.ReadDir(path)
+func ReadRules(dirname string) (rules Rules, err error) {
+	files, err := ioutil.ReadDir(dirname)
 	if err != nil {
 		return rules, err
 	}
 
 	for _, file := range files {
-		b, err := ioutil.ReadFile(path + file.Name())
+		b, err := ioutil.ReadFile(path.Join(dirname, file.Name()))
 		if err != nil {
 			return rules, err
 		}
