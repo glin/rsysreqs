@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"rsysreqs"
+	"github.com/glin/rsysreqs"
 )
 
 func main() {

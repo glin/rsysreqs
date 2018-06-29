@@ -1,20 +1,15 @@
-PACKAGES = rsysreqs/...
+PACKAGES = ./...
 
 all: test build
 
 build:
-	@GOPATH=$(PWD) go install $(PACKAGES)
-
-PORT ?= 3000
-start:
-	@PORT=$(PORT) GOPATH=$(PWD) ./bin/rsysreqs-server
+	@go install $(PACKAGES)
 
 test:
-	@GOPATH=$(PWD) go test -v $(PACKAGES)
+	@go test -v -cover $(PACKAGES)
 
 clean:
-	go clean
-	rm -rf bin
+	@go clean -i $(PACKAGES)
 
 vendor-ensure:
-	@cd ./src/rsysreqs; GOPATH=$(PWD) dep ensure
+	dep ensure
