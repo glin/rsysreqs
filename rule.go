@@ -17,6 +17,8 @@ type Dependency struct {
 type Constraint struct {
 	Os           string `json:"os,omitempty"`
 	Distribution string `json:"distribution,omitempty"`
+	ReleaseMin   string `json:"releaseMin,omitempty"`
+	ReleaseMax   string `json:"releaseMax,omitempty"`
 	Architecture string `json:"architecture,omitempty"`
 }
 
