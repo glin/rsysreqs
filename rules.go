@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"path"
+	"path/filepath"
 )
 
 var ErrNoMatchingRules = errors.New("no matching rules found")
@@ -36,7 +36,7 @@ func ReadRules(dirname string) (rules Rules, err error) {
 	}
 
 	for _, file := range files {
-		b, err := ioutil.ReadFile(path.Join(dirname, file.Name()))
+		b, err := ioutil.ReadFile(filepath.Join(dirname, file.Name()))
 		if err != nil {
 			return rules, err
 		}
