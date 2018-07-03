@@ -30,7 +30,7 @@ Usage of rsysreqs:
   -s string
         system requirements
 
-$ rsysreqs-server -h
+$ rsysreqs-server
 Usage of rsysreqs-server:
   -d string
         use rules from this directory

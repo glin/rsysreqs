@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"log"
 	"net/http"
@@ -9,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/glin/rsysreqs"
 )
+
+var ErrMissingParams = errors.New("missing required parameters")
 
 func main() {
 	rulesDir := flag.String("d", "", "use rules from this directory")
@@ -20,28 +23,72 @@ func main() {
 		os.Exit(2)
 	}
 
-	rules, err := rsysreqs.ReadRules(*rulesDir)
+	r := gin.Default()
+
+	r.Use(rules(*rulesDir))
+
+	r.GET("/packages", getPackages)
+
+	r.Run()
+}
+
+func rules(rulesDir string) gin.HandlerFunc {
+	rules, err := rsysreqs.ReadRules(rulesDir)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	r := gin.Default()
-	r.GET("/rules", func(c *gin.Context) {
-		sysreqs := c.DefaultQuery("sysreqs", "")
+	return func(c *gin.Context) {
+		c.Set("rules", rules)
+		c.Next()
+	}
+}
 
-		matched, err := rules.FindRules(sysreqs)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
+func getPackages(c *gin.Context) {
+	r, exists := c.Get("rules")
+	rules, ok := r.(rsysreqs.Rules)
+	if !exists || !ok {
+		log.Fatalf("missing or invalid rules")
+	}
 
-		c.JSON(http.StatusOK, gin.H{
-			"rules": matched,
+	sysreqs := c.Query("sysreqs")
+	sysOs := c.Query("os")
+	sysDistribution := c.Query("dist")
+	sysRelease := c.Query("release")
+	sysArch := c.Query("arch")
+
+	if sysreqs == "" || (sysOs == "" && sysDistribution == "") {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": ErrMissingParams.Error(),
 		})
-	})
+		return
+	}
 
-	r.Run()
+	matched, err := rules.FindRules(sysreqs)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	system := rsysreqs.System{
+		Os:           sysOs,
+		Distribution: sysDistribution,
+		Release:      sysRelease,
+		Architecture: sysArch,
+	}
+
+	packages, err := matched.FindPackages(system)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"packages": packages,
+	})
 }
