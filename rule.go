@@ -5,21 +5,21 @@ import (
 )
 
 type Rule struct {
-	Sysreqs      []string     `json:"sysreqs"`
-	Dependencies []Dependency `json:"dependencies"`
+	Sysreqs      []string
+	Dependencies []Dependency
 }
 
 type Dependency struct {
-	Packages    []string     `json:"packages"`
-	Constraints []Constraint `json:"constraints"`
+	Packages    []string
+	Constraints []Constraint
 }
 
 type Constraint struct {
-	Os           string `json:"os,omitempty"`
-	Distribution string `json:"distribution,omitempty"`
-	ReleaseMin   string `json:"releaseMin,omitempty"`
-	ReleaseMax   string `json:"releaseMax,omitempty"`
-	Architecture string `json:"architecture,omitempty"`
+	Os           string
+	Distribution string
+	ReleaseMin   string
+	ReleaseMax   string
+	Architecture string
 }
 
 type System struct {
