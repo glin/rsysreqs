@@ -15,10 +15,18 @@ make test
 ### Usage
 
 ```sh
-$ rsysreqs -h
+$ rsysreqs
 Usage of rsysreqs:
+  -arch string
+        architecture
   -d string
         use rules from this directory
+  -dist string
+        distribution
+  -os string
+        operating system
+  -release string
+        release
   -s string
         system requirements
 

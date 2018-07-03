@@ -5,16 +5,22 @@ import (
 	"fmt"
 	"os"
 
+	"encoding/json"
+
 	"github.com/glin/rsysreqs"
 )
 
 func main() {
 	sysreqs := flag.String("s", "", "system requirements")
 	rulesDir := flag.String("d", "", "use rules from this directory")
+	sysOs := flag.String("os", "", "operating system")
+	sysDistribution := flag.String("dist", "", "distribution")
+	sysRelease := flag.String("release", "", "release")
+	sysArch := flag.String("arch", "", "architecture")
 
 	flag.Parse()
 
-	if *sysreqs == "" || *rulesDir == "" {
+	if *sysreqs == "" || *rulesDir == "" || (*sysOs == "" && *sysDistribution == "") {
 		flag.Usage()
 		os.Exit(2)
 	}
@@ -31,8 +37,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("found %d rules\n", len(matched))
-	for _, r := range matched {
-		fmt.Println(r)
+	system := rsysreqs.System{
+		Os:           *sysOs,
+		Distribution: *sysDistribution,
+		Release:      *sysRelease,
+		Architecture: *sysArch,
 	}
+
+	packages, err := matched.FindPackages(system)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	packagesJson, err := json.MarshalIndent(packages, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Printf("%s\n", packagesJson)
 }
