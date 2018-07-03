@@ -7,7 +7,10 @@ import (
 	"path/filepath"
 )
 
-var ErrNoMatchingRules = errors.New("no matching rules found")
+var (
+	ErrNoMatchingRules = errors.New("no matching rules found")
+	ErrNoPackages      = errors.New("no packages found")
+)
 
 type Rules []Rule
 
@@ -27,6 +30,21 @@ func (rules Rules) FindRules(sysreqs string) (found Rules, err error) {
 	}
 
 	return found, err
+}
+
+func (rules Rules) FindPackages(system System) (packages []string, err error) {
+	for _, rule := range rules {
+		found := rule.FindPackages(system)
+		if len(found) > 0 {
+			packages = append(packages, found...)
+		}
+	}
+
+	if len(packages) == 0 {
+		err = ErrNoPackages
+	}
+
+	return packages, err
 }
 
 func ReadRules(dirname string) (rules Rules, err error) {

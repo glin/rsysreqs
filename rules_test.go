@@ -25,3 +25,34 @@ func (s *Suite) TestFindRules(c *check.C) {
 	c.Assert(found, check.HasLen, 1)
 	c.Assert(found[0], check.DeepEquals, rulePkgA)
 }
+
+func (s *Suite) TestFindPackages(c *check.C) {
+	rulePkgA := Rule{
+		Sysreqs: []string{"\\bpkgA\\b"},
+		Dependencies: []Dependency{
+			{
+				Packages:    []string{"pkgA-1", "pkgA-2"},
+				Constraints: []Constraint{{Distribution: "ubuntu"}},
+			},
+		},
+	}
+
+	rulePkgB := Rule{
+		Sysreqs: []string{"\\bpkgB\\b"},
+		Dependencies: []Dependency{
+			{
+				Packages:    []string{"pkgB-1", "pkgB-2"},
+				Constraints: []Constraint{{Distribution: "ubuntu", Architecture: "i386"}},
+			},
+		},
+	}
+
+	rules := Rules{rulePkgA, rulePkgB}
+
+	found, err := rules.FindRules("pkga, pkgb")
+	c.Assert(err, check.IsNil)
+
+	packages, err := found.FindPackages(System{Distribution: "ubuntu"})
+	c.Assert(err, check.IsNil)
+	c.Assert(packages, check.DeepEquals, []string{"pkgA-1", "pkgA-2", "pkgB-1", "pkgB-2"})
+}
