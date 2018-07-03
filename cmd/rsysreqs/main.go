@@ -20,7 +20,7 @@ func main() {
 
 	flag.Parse()
 
-	if *sysreqs == "" || *rulesDir == "" || (*sysOs == "" && *sysDistribution == "") {
+	if *sysreqs == "" || *rulesDir == "" || *sysOs == "" {
 		flag.Usage()
 		os.Exit(2)
 	}

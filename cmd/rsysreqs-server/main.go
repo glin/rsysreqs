@@ -58,7 +58,7 @@ func getPackages(c *gin.Context) {
 	sysRelease := c.Query("release")
 	sysArch := c.Query("arch")
 
-	if sysreqs == "" || (sysOs == "" && sysDistribution == "") {
+	if sysreqs == "" || sysOs == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": ErrMissingParams.Error(),
 		})

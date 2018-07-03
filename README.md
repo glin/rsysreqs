@@ -50,6 +50,6 @@ Find system packages
 |----|----|-----------------|-----------|
 |sysreqs|string|required|system requirements|
 |os|string|required|operating system|
-|dist|string|required|distribution|
+|dist|string|optional|distribution|
 |release|string|optional|release|
 |arch|string|optional|architecture|
