@@ -33,10 +33,15 @@ func (rules Rules) FindRules(sysreqs string) (found Rules, err error) {
 }
 
 func (rules Rules) FindPackages(system System) (packages []string, err error) {
+	seen := map[string]bool{}
+
 	for _, rule := range rules {
 		found := rule.FindPackages(system)
-		if len(found) > 0 {
-			packages = append(packages, found...)
+		for _, pkg := range found {
+			if !seen[pkg] {
+				seen[pkg] = true
+				packages = append(packages, pkg)
+			}
 		}
 	}
 

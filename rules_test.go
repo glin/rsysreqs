@@ -31,7 +31,7 @@ func (s *Suite) TestFindPackages(c *check.C) {
 		Sysreqs: []string{"\\bpkgA\\b"},
 		Dependencies: []Dependency{
 			{
-				Packages:    []string{"pkgA-1", "pkgA-2"},
+				Packages:    []string{"pkgA-1", "pkgA-2", "pkgC"},
 				Constraints: []Constraint{{Distribution: "ubuntu"}},
 			},
 		},
@@ -41,7 +41,7 @@ func (s *Suite) TestFindPackages(c *check.C) {
 		Sysreqs: []string{"\\bpkgB\\b"},
 		Dependencies: []Dependency{
 			{
-				Packages:    []string{"pkgB-1", "pkgB-2"},
+				Packages:    []string{"pkgB-1", "pkgB-2", "pkgC"},
 				Constraints: []Constraint{{Distribution: "ubuntu", Architecture: "i386"}},
 			},
 		},
@@ -54,5 +54,5 @@ func (s *Suite) TestFindPackages(c *check.C) {
 
 	packages, err := found.FindPackages(System{Distribution: "ubuntu"})
 	c.Assert(err, check.IsNil)
-	c.Assert(packages, check.DeepEquals, []string{"pkgA-1", "pkgA-2", "pkgB-1", "pkgB-2"})
+	c.Assert(packages, check.DeepEquals, []string{"pkgA-1", "pkgA-2", "pkgC", "pkgB-1", "pkgB-2"})
 }
