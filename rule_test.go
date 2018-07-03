@@ -90,6 +90,6 @@ func (s *Suite) TestConstraintSatisfiedBy(c *check.C) {
 		system, constraint := test.system, test.constraint
 		satisfied := constraint.satisfiedBy(system)
 		c.Assert(satisfied, check.Equals, test.expected,
-			check.Commentf("system: %s, constraint: %s, expected: %v", system, constraint))
+			check.Commentf("system: %s, constraint: %s, expected: %v", system, constraint, test.expected))
 	}
 }
