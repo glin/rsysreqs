@@ -1,4 +1,4 @@
-package rsysreqs
+package rules
 
 import (
 	"gopkg.in/check.v1"

@@ -1,4 +1,4 @@
-package rsysreqs
+package rules
 
 import (
 	"regexp"

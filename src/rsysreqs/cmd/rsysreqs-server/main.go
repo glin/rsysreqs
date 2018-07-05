@@ -8,7 +8,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/glin/rsysreqs"
+
+	"rsysreqs/rules"
 )
 
 var ErrMissingParams = errors.New("missing required parameters")
@@ -25,29 +26,29 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(rules(*rulesDir))
+	r.Use(contextRules(*rulesDir))
 
 	r.GET("/packages", getPackages)
 
 	r.Run()
 }
 
-func rules(rulesDir string) gin.HandlerFunc {
-	rules, err := rsysreqs.ReadRules(rulesDir)
+func contextRules(rulesDir string) gin.HandlerFunc {
+	readRules, err := rules.ReadRules(rulesDir)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return func(c *gin.Context) {
-		c.Set("rules", rules)
+		c.Set("rules", readRules)
 		c.Next()
 	}
 }
 
 func getPackages(c *gin.Context) {
 	r, exists := c.Get("rules")
-	rules, ok := r.(rsysreqs.Rules)
+	ctxRules, ok := r.(rules.Rules)
 	if !exists || !ok {
 		log.Fatalf("missing or invalid rules")
 	}
@@ -65,7 +66,7 @@ func getPackages(c *gin.Context) {
 		return
 	}
 
-	matched, err := rules.FindRules(sysreqs)
+	matched, err := ctxRules.FindRules(sysreqs)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -73,7 +74,7 @@ func getPackages(c *gin.Context) {
 		return
 	}
 
-	system := rsysreqs.System{
+	system := rules.System{
 		Os:           sysOs,
 		Distribution: sysDistribution,
 		Release:      sysRelease,

@@ -1,15 +1,15 @@
-PACKAGES = ./...
+PACKAGES = ./src/rsysreqs/...
 
 all: test build
 
 build:
-	@go install $(PACKAGES)
+	GOPATH=$(CURDIR) go install $(PACKAGES)
 
 test:
-	@go test -v -cover $(PACKAGES)
+	GOPATH=$(CURDIR) go test -v -cover $(PACKAGES)
 
 clean:
-	@go clean -i $(PACKAGES)
+	GOPATH=$(CURDIR) go clean -i $(PACKAGES)
 
 vendor-ensure:
-	dep ensure
+	cd src/rsysreqs; GOPATH=$(CURDIR) dep ensure
