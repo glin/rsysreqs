@@ -7,7 +7,7 @@ import (
 
 	"encoding/json"
 
-	"github.com/glin/rsysreqs"
+	"rsysreqs/rules"
 )
 
 func main() {
@@ -25,19 +25,19 @@ func main() {
 		os.Exit(2)
 	}
 
-	rules, err := rsysreqs.ReadRules(*rulesDir)
+	readRules, err := rules.ReadRules(*rulesDir)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	matched, err := rules.FindRules(*sysreqs)
+	matched, err := readRules.FindRules(*sysreqs)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	system := rsysreqs.System{
+	system := rules.System{
 		Os:           *sysOs,
 		Distribution: *sysDistribution,
 		Release:      *sysRelease,
