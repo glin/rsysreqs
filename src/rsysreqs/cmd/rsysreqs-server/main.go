@@ -37,7 +37,7 @@ func contextRules(rulesDir string) gin.HandlerFunc {
 	readRules, err := rules.ReadRules(rulesDir)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error reading rules: %s", err)
 	}
 
 	return func(c *gin.Context) {
