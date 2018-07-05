@@ -17,11 +17,9 @@ type Rules []Rule
 func (rules Rules) FindRules(sysreqs string) (Rules, error) {
 	var found Rules
 	for _, rule := range rules {
-		matched, err := rule.Match(sysreqs)
-		if err != nil {
+		if matched, err := rule.Match(sysreqs); err != nil {
 			return nil, err
-		}
-		if matched {
+		} else if matched {
 			found = append(found, rule)
 		}
 	}
