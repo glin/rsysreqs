@@ -29,18 +29,19 @@ type System struct {
 	Architecture string
 }
 
-func (rule Rule) Match(sysreqs string) (matched bool, err error) {
+func (rule Rule) Match(sysreqs string) (bool, error) {
 	for _, pattern := range rule.Sysreqs {
 		// TODO check for existing flags
-		matched, err = regexp.MatchString("(?i)"+pattern, sysreqs)
+		matched, err := regexp.MatchString("(?i)"+pattern, sysreqs)
 		if matched || err != nil {
-			break
+			return matched, err
 		}
 	}
-	return matched, err
+	return false, nil
 }
 
-func (rule Rule) FindPackages(sys System) (packages []string) {
+func (rule Rule) FindPackages(sys System) []string {
+	var packages []string
 	for _, dep := range rule.Dependencies {
 		for _, constraint := range dep.Constraints {
 			if constraint.satisfiedBy(sys) {

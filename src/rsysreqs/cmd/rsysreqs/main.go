@@ -27,7 +27,7 @@ func main() {
 
 	readRules, err := rules.ReadRules(*rulesDir)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error reading rules:", err)
 		os.Exit(1)
 	}
 

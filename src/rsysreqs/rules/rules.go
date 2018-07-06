@@ -14,27 +14,26 @@ var (
 
 type Rules []Rule
 
-func (rules Rules) FindRules(sysreqs string) (found Rules, err error) {
+func (rules Rules) FindRules(sysreqs string) (Rules, error) {
+	var found Rules
 	for _, rule := range rules {
-		matched, err := rule.Match(sysreqs)
-		if err != nil {
-			return rules, err
-		}
-		if matched {
+		if matched, err := rule.Match(sysreqs); err != nil {
+			return nil, err
+		} else if matched {
 			found = append(found, rule)
 		}
 	}
 
 	if len(found) == 0 {
-		err = ErrNoMatchingRules
+		return nil, ErrNoMatchingRules
 	}
 
-	return found, err
+	return found, nil
 }
 
-func (rules Rules) FindPackages(system System) (packages []string, err error) {
-	seen := map[string]bool{}
-
+func (rules Rules) FindPackages(system System) ([]string, error) {
+	var packages []string
+	seen := make(map[string]bool, 0)
 	for _, rule := range rules {
 		found := rule.FindPackages(system)
 		for _, pkg := range found {
@@ -46,28 +45,29 @@ func (rules Rules) FindPackages(system System) (packages []string, err error) {
 	}
 
 	if len(packages) == 0 {
-		err = ErrNoPackages
+		return nil, ErrNoPackages
 	}
 
-	return packages, err
+	return packages, nil
 }
 
-func ReadRules(dirname string) (rules Rules, err error) {
+func ReadRules(dirname string) (Rules, error) {
 	files, err := ioutil.ReadDir(dirname)
 	if err != nil {
-		return rules, err
+		return nil, err
 	}
 
+	var rules Rules
 	for _, file := range files {
 		b, err := ioutil.ReadFile(filepath.Join(dirname, file.Name()))
 		if err != nil {
-			return rules, err
+			return nil, err
 		}
 
 		r := Rule{}
 		err = json.Unmarshal(b, &r)
 		if err != nil {
-			return rules, err
+			return nil, err
 		}
 		rules = append(rules, r)
 	}
