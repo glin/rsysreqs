@@ -101,7 +101,7 @@ func getPackages(c *gin.Context) {
 	installScripts := generator.InstallScripts(packages)
 
 	c.JSON(http.StatusOK, gin.H{
-		"packages":       packages,
-		"installScripts": installScripts,
+		"packages":        packages,
+		"install_scripts": installScripts,
 	})
 }

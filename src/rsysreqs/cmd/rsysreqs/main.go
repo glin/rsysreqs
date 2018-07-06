@@ -60,7 +60,7 @@ func main() {
 
 	pkgActions := struct {
 		Packages       []string `json:"packages"`
-		InstallScripts []string `json:"installScripts"`
+		InstallScripts []string `json:"install_scripts"`
 	}{
 		packages,
 		installScripts,
