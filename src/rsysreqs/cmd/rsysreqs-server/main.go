@@ -90,13 +90,15 @@ func getPackages(c *gin.Context) {
 		return
 	}
 
-	installScripts, err := scripts.GenerateInstallScripts(system, packages)
+	generator, err := scripts.NewScriptGenerator(system)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
+
+	installScripts := generator.InstallScripts(packages)
 
 	c.JSON(http.StatusOK, gin.H{
 		"packages":       packages,

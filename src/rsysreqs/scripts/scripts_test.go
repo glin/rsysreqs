@@ -14,21 +14,16 @@ type Suite struct{}
 
 var _ = check.Suite(&Suite{})
 
-func (s *Suite) TestGenerateInstallScripts(c *check.C) {
+func (s *Suite) TestNewScriptGenerator(c *check.C) {
 	sys := rules.System{Os: "linux", Distribution: "ubuntu"}
-	packages := []string{"pkgA", "pkgB"}
-	scripts, err := GenerateInstallScripts(sys, packages)
-
+	generator, err := NewScriptGenerator(sys)
 	c.Assert(err, check.IsNil)
-	c.Assert(scripts, check.HasLen, 2)
-	c.Assert(scripts[0], check.DeepEquals, "apt-get install -y pkgA")
-	c.Assert(scripts[1], check.DeepEquals, "apt-get install -y pkgB")
+	c.Assert(generator, check.FitsTypeOf, ubuntuScriptGenerator{})
 }
 
-func (s *Suite) TestGenerateInstallScript(c *check.C) {
-	sys := rules.System{Os: "linux", Distribution: "ubuntu"}
-	script, err := generateInstallScript(sys, "pkgA")
-
-	c.Assert(err, check.IsNil)
-	c.Assert(script, check.Equals, "apt-get install -y pkgA")
+func (s *Suite) TestNewScriptGeneratorUnsupported(c *check.C) {
+	sys := rules.System{Os: "unsupported_os"}
+	generator, err := NewScriptGenerator(sys)
+	c.Assert(err, check.Equals, ErrUnsupportedSystem)
+	c.Assert(generator, check.IsNil)
 }

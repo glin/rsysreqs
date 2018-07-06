@@ -2,40 +2,20 @@ package scripts
 
 import (
 	"errors"
-	"fmt"
 
 	"rsysreqs/rules"
 )
 
 var ErrUnsupportedSystem = errors.New("unsupported system")
 
-func GenerateInstallScripts(sys rules.System, packages []string) ([]string, error) {
-	var cmds []string
-	for _, pkg := range packages {
-		cmd, err := generateInstallScript(sys, pkg)
-		if err != nil {
-			return nil, err
-		}
-		cmds = append(cmds, cmd)
-	}
-
-	return cmds, nil
+type ScriptGenerator interface {
+	InstallScripts(packages []string) []string
 }
 
-func generateInstallScript(sys rules.System, pkg string) (string, error) {
-	var script string
+func NewScriptGenerator(sys rules.System) (ScriptGenerator, error) {
 	switch {
 	case sys.Os == "linux" && sys.Distribution == "ubuntu":
-		script = ubuntuInstallScript(pkg)
+		return ubuntuScriptGenerator{}, nil
 	}
-
-	if script == "" {
-		return "", ErrUnsupportedSystem
-	}
-
-	return script, nil
-}
-
-func ubuntuInstallScript(pkg string) string {
-	return fmt.Sprintf("apt-get install -y %s", pkg)
+	return nil, ErrUnsupportedSystem
 }

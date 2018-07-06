@@ -50,11 +50,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	installScripts, err := scripts.GenerateInstallScripts(system, packages)
+	generator, err := scripts.NewScriptGenerator(system)
 	if err != nil {
-		fmt.Println("error generating install scripts", err)
+		fmt.Println("error generating install scripts:", err)
 		os.Exit(1)
 	}
+
+	installScripts := generator.InstallScripts(packages)
 
 	pkgActions := struct {
 		Packages       []string `json:"packages"`
