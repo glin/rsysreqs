@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 
-	"encoding/json"
-
 	"rsysreqs/rules"
+	"rsysreqs/scripts"
 )
 
 func main() {
@@ -50,10 +50,24 @@ func main() {
 		os.Exit(1)
 	}
 
-	packagesJson, err := json.MarshalIndent(packages, "", "  ")
+	installScripts, err := scripts.GenerateInstallScripts(system, packages)
+	if err != nil {
+		fmt.Println("error generating install scripts", err)
+		os.Exit(1)
+	}
+
+	pkgActions := struct {
+		Packages       []string `json:"packages"`
+		InstallScripts []string `json:"installScripts"`
+	}{
+		packages,
+		installScripts,
+	}
+
+	pkgActionsJson, err := json.MarshalIndent(pkgActions, "", "  ")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Printf("%s\n", packagesJson)
+	fmt.Printf("%s\n", pkgActionsJson)
 }
