@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"rsysreqs/rules"
+	"rsysreqs/scripts"
 )
 
 var ErrMissingParams = errors.New("missing required parameters")
@@ -89,7 +90,18 @@ func getPackages(c *gin.Context) {
 		return
 	}
 
+	generator, err := scripts.NewScriptGenerator(system)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	installScripts := generator.InstallScripts(packages)
+
 	c.JSON(http.StatusOK, gin.H{
-		"packages": packages,
+		"packages":        packages,
+		"install_scripts": installScripts,
 	})
 }
